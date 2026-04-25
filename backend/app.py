@@ -228,44 +228,88 @@ def init_db():
     # =========================
     if DB_TYPE == 'postgres':
         c.execute('''CREATE TABLE IF NOT EXISTS Users (
-            user_id SERIAL PRIMARY KEY,
-            name TEXT NOT NULL,
-            email TEXT UNIQUE NOT NULL,
-            password_hash TEXT NOT NULL,
-            role TEXT DEFAULT 'dealer',
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP)''')
-
+        user_id SERIAL PRIMARY KEY,
+        name TEXT NOT NULL,
+        email TEXT UNIQUE NOT NULL,
+        password_hash TEXT NOT NULL,
+        role TEXT DEFAULT 'dealer',
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP)''')
         c.execute('''CREATE TABLE IF NOT EXISTS OEM_Specs (
-            oem_id SERIAL PRIMARY KEY,
-            make TEXT NOT NULL,
-            model TEXT NOT NULL,
-            year INTEGER NOT NULL,
-            list_price REAL NOT NULL,
-            available_colors TEXT NOT NULL,
-            mileage_kmpl REAL NOT NULL,
-            power_bhp REAL NOT NULL,
-            max_speed_kmph INTEGER NOT NULL,
-            fuel_type TEXT NOT NULL,
-            transmission TEXT NOT NULL)''')
-
+        oem_id SERIAL PRIMARY KEY,
+        make TEXT NOT NULL,
+        model TEXT NOT NULL,
+        year INTEGER NOT NULL,
+        list_price REAL NOT NULL,
+        available_colors TEXT NOT NULL,
+        mileage_kmpl REAL NOT NULL,
+        power_bhp REAL NOT NULL,
+        max_speed_kmph INTEGER NOT NULL,
+        fuel_type TEXT NOT NULL,
+        transmission TEXT NOT NULL)''')
         c.execute('''CREATE TABLE IF NOT EXISTS Marketplace_Inventory (
-            inventory_id SERIAL PRIMARY KEY,
-            dealer_id INTEGER REFERENCES Users(user_id),
-            oem_id INTEGER REFERENCES OEM_Specs(oem_id),
-            title TEXT,
-            description TEXT,
-            asking_price REAL,
-            color TEXT,
-            odometer_km INTEGER,
-            major_scratches INTEGER,
-            original_paint BOOLEAN,
-            accidents_reported INTEGER,
-            previous_buyers INTEGER,
-            registration_place TEXT,
-            image_url TEXT,
-            listed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP)''')
+        inventory_id SERIAL PRIMARY KEY,
+        dealer_id INTEGER REFERENCES Users(user_id),
+        oem_id INTEGER REFERENCES OEM_Specs(oem_id),
+        title TEXT,
+        description TEXT,
+        asking_price REAL,
+        color TEXT,
+        odometer_km INTEGER,
+        major_scratches INTEGER,
+        original_paint BOOLEAN,
+        accidents_reported INTEGER,
+        previous_buyers INTEGER,
+        registration_place TEXT,
+        image_url TEXT,
+        listed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP)''')
+        
     else:
-        pass
+        c.execute("""
+    CREATE TABLE IF NOT EXISTS Users (
+        user_id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT,
+        email TEXT UNIQUE,
+        password_hash TEXT,
+        role TEXT,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    )
+    """)
+
+    c.execute("""
+    CREATE TABLE IF NOT EXISTS OEM_Specs (
+        oem_id INTEGER PRIMARY KEY AUTOINCREMENT,
+        make TEXT,
+        model TEXT,
+        year INTEGER,
+        list_price REAL,
+        available_colors TEXT,
+        mileage_kmpl REAL,
+        power_bhp REAL,
+        max_speed_kmph REAL,
+        fuel_type TEXT,
+        transmission TEXT
+    )
+    """)
+
+    c.execute("""
+    CREATE TABLE IF NOT EXISTS Marketplace_Inventory (
+        inventory_id INTEGER PRIMARY KEY AUTOINCREMENT,
+        dealer_id INTEGER,
+        oem_id INTEGER,
+        title TEXT,
+        description TEXT,
+        asking_price REAL,
+        color TEXT,
+        odometer_km INTEGER,
+        major_scratches INTEGER,
+        original_paint BOOLEAN,
+        accidents_reported INTEGER,
+        previous_buyers INTEGER,
+        registration_place TEXT,
+        image_url TEXT,
+        listed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    )
+    """)
 
     conn.commit()
 

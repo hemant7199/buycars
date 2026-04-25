@@ -39,16 +39,16 @@ BuyCars is a full-stack used car marketplace platform that enables dealers to li
 ## 📸 Screenshots
 
 ### 🏠 Home / Login Page
-![Login](screenshot_login.png)
+![Login](image/ui.png)
 
 ### 🔍 Browse & Search
-![Browse](screenshot_home.png)
+![Browse](image/b1.png)
 
 ### 🚗 Search Results & Car Cards
-![Search Results](screenshot_search.png)
+![Search Results](image/b2.png)
 
 ### 🗄️ OEM Specifications
-![OEM Specs](screenshot_oem.png)
+![OEM Specs](image/oemm.png)
 
 ---
 
