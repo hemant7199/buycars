@@ -269,11 +269,13 @@ def init_db():
     conn.commit()
 
     # Seed only if empty
-    c.execute("SELECT COUNT(*) FROM OEM_Specs")
+    # Check inventory instead of OEM
+    c.execute("SELECT COUNT(*) FROM Marketplace_Inventory")
     r = c.fetchone()
     count = list(r.values())[0] if isinstance(r, dict) else r[0]
     if count > 0:
-        conn.close(); return
+        conn.close()
+        return
 
     pw = generate_password_hash('password123')
     for u in [('Rajesh Kumar','rajesh@dealer.com',pw,'dealer'),

@@ -371,7 +371,7 @@ const AuthPage = ({ onAuth }) => {
       <div style={{ flex:1, display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", padding:48, color:T.white }}>
         <div style={{ maxWidth:440 }}>
           <div style={{ display:"flex", alignItems:"center", gap:10, marginBottom:48 }}>
-            <div style={{ width:44, height:44, background:`linear-gradient(135deg,${T.gold},${T.goldDark})`, borderRadius:12, display:"flex", alignItems:"center", justifyContent:"center", fontSize:22 }}></div>
+            <div style={{ width:44, height:44, background:`linear-gradient(135deg,${T.gold},${T.goldDark})`, borderRadius:12, display:"flex", alignItems:"center", justifyContent:"center", fontSize:22 }}>🚗</div>
             <span style={{ fontSize:26, fontWeight:800, letterSpacing:"-0.5px" }}>buy<span style={{color:T.gold}}>cars</span>.com</span>
           </div>
           <h1 style={{ fontSize:42, fontWeight:800, lineHeight:1.15, marginBottom:20 }}>India's smartest<br/><span style={{color:T.gold}}>second-hand car</span><br/>marketplace</h1>
@@ -386,7 +386,7 @@ const AuthPage = ({ onAuth }) => {
       </div>
       <div style={{ width:480, display:"flex", alignItems:"center", justifyContent:"center", padding:32, background:"rgba(255,255,255,0.04)", backdropFilter:"blur(20px)", borderLeft:"1px solid rgba(255,255,255,0.08)" }}>
         <div className="slide-up" style={{ background:T.white, borderRadius:24, padding:"44px 40px", width:"100%", boxShadow:"0 24px 80px rgba(0,0,0,0.4)" }}>
-          <h2 style={{ fontSize:26, fontWeight:800, color:T.dark, marginBottom:6 }}>{mode==="login"?"Welcome back 👋":"Create account 🚀"}</h2>
+          <h2 style={{ fontSize:26, fontWeight:800, color:T.dark, marginBottom:6 }}>{mode==="login"?"Welcome back 👋":"Create account"}</h2>
           <p style={{ color:T.muted, fontSize:14, marginBottom:32 }}>{mode==="login"?"Sign in to your dealer dashboard":"Register as a new dealer on buycars.com"}</p>
           <div style={{ display:"flex", flexDirection:"column", gap:16 }}>
             {mode==="signup" && <Input label="Full Name" value={form.name} onChange={set("name")} placeholder="e.g. Rajesh Kumar" required />}
@@ -628,7 +628,7 @@ const Browse = ({ showToast, auth }) => {
       <div style={{ background:`linear-gradient(135deg,${T.dark} 0%,#2D1B69 100%)`, borderRadius:20, padding:"36px 40px", marginBottom:32, display:"flex", justifyContent:"space-between", alignItems:"center", overflow:"hidden", position:"relative" }}>
         <div style={{ position:"absolute", right:-60, top:-60, width:300, height:300, background:"rgba(124,92,191,0.15)", borderRadius:"50%" }} />
         <div>
-          <h1 style={{ color:T.white, fontSize:32, fontWeight:800, marginBottom:8 }}>Find Your Perfect Car 🚗</h1>
+          <h1 style={{ color:T.white, fontSize:32, fontWeight:800, marginBottom:8 }}>Find Your Perfect Car </h1>
           <p style={{ color:"rgba(255,255,255,0.55)", fontSize:15 }}>Browse {total} quality pre-owned vehicles from verified dealers</p>
         </div>
         <div style={{ display:"flex", gap:20 }}>
@@ -874,14 +874,13 @@ const WishlistPage = ({ token, showToast, auth }) => {
   return (
     <div style={{ maxWidth:1280, margin:"0 auto", padding:"36px 28px" }} className="fade-in">
       <div style={{ marginBottom:28 }}>
-        <h2 style={{ fontSize:26, fontWeight:800, color:T.dark }}>❤️ My Wishlist</h2>
+        <h2 style={{ fontSize:26, fontWeight:800, color:T.dark }}>My Wishlist</h2>
         <p style={{ color:T.muted, fontSize:14, marginTop:4 }}>Cars you've saved for later</p>
       </div>
       {loading ? <SkeletonGrid count={3} /> : cars.length === 0 ? (
         <div style={{ textAlign:"center", padding:"80px 20px" }}>
-          <div style={{ fontSize:64, marginBottom:16 }}>🤍</div>
+          <div style={{ fontSize:64, marginBottom:16 }}></div>
           <div style={{ fontSize:20, fontWeight:700, color:T.dark, marginBottom:8 }}>No saved cars yet</div>
-          <div style={{ color:T.muted, marginBottom:20 }}>Browse listings and tap 🤍 to save cars here.</div>
         </div>
       ) : (
         <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fill,minmax(340px,1fr))", gap:24 }}>
