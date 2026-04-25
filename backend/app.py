@@ -326,7 +326,7 @@ def init_db():
     # =========================
     # CHECK INVENTORY FIRST
     # =========================
-    # # CHECK INVENTORY FIRST
+    # CHECK INVENTORY FIRST
     # # =========================
     c.execute("SELECT COUNT(*) FROM Marketplace_Inventory")
     count = c.fetchone()[0]
@@ -401,95 +401,87 @@ def init_db():
     # =========================
     # INVENTORY DATA
     # =========================
-   
+
     c.execute("SELECT user_id FROM Users WHERE role='dealer'")
     dids = [r[0] for r in c.fetchall()]
-    # ✅ GET OEM IDS
+
     c.execute("SELECT oem_id FROM OEM_Specs ORDER BY oem_id")
     oids = [r[0] for r in c.fetchall()]
+
+    TESTING = os.getenv("TESTING") == "1"
+
+    if TESTING:
+        oids = oids[:6]
+
     if len(oids) < 6 or len(dids) < 3:
-     
         print("Not enough data to insert inventory")
         conn.close()
         return
 
     d1, d2, d3 = dids[0], dids[1], dids[2]
+    # =========================
+    # INVENTORY LIST
+    # =========================
+    if TESTING:
+        inventory = [
+            (d1, oids[0], 'Honda City 2015', 'Good condition', 620000, 'White', 52000, 0, True, 0, 1, 'Delhi',
+             'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c7/2014_Honda_City_1.5_V_%28front%29%2C_Subang_Jaya.jpg/640px-2014_Honda_City_1.5_V_%28front%29%2C_Subang_Jaya.jpg'),
 
-    inventory = [
-    (d1, oids[0], 'Honda City 2015', 'Good condition', 620000, 'White', 52000, 0, True, 0, 1, 'Delhi',
-     'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c7/2014_Honda_City_1.5_V_%28front%29%2C_Subang_Jaya.jpg/640px-2014_Honda_City_1.5_V_%28front%29%2C_Subang_Jaya.jpg'),
+            (d1, oids[1], 'Honda City 2018', 'Excellent', 780000, 'Silver', 41000, 0, True, 0, 1, 'Mumbai',
+             'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/2018_Honda_City_1.5_V_%28front%29%2C_Subang_Jaya.jpg/640px-2018_Honda_City_1.5_V_%28front%29%2C_Subang_Jaya.jpg'),
 
-    (d1, oids[1], 'Honda City 2018', 'Excellent', 780000, 'Silver', 41000, 0, True, 0, 1, 'Mumbai',
-     'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/2018_Honda_City_1.5_V_%28front%29%2C_Subang_Jaya.jpg/640px-2018_Honda_City_1.5_V_%28front%29%2C_Subang_Jaya.jpg'),
+            (d1, oids[2], 'Honda Amaze 2020', 'Family car', 550000, 'Red', 30000, 0, True, 0, 1, 'Delhi',
+             'https://upload.wikimedia.org/wikipedia/commons/thumb/2/2d/Honda_Amaze_2018.jpg/640px-Honda_Amaze_2018.jpg'),
 
-    (d1, oids[2], 'Honda Amaze 2020', 'Family car', 550000, 'Red', 30000, 0, True, 0, 1, 'Delhi',
-     'https://upload.wikimedia.org/wikipedia/commons/thumb/2/2d/Honda_Amaze_2018.jpg/640px-Honda_Amaze_2018.jpg'),
+            (d2, oids[3], 'Swift 2016', 'Budget car', 310000, 'Red', 78000, 1, True, 0, 2, 'Patiala',
+             'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9d/Maruti_Suzuki_Swift_VXI_%28facelift%2C_red%29%2C_front_8.22.19.jpg/640px-Maruti_Suzuki_Swift_VXI_%28facelift%2C_red%29%2C_front_8.22.19.jpg'),
 
-    (d2, oids[3], 'Swift 2016', 'Budget car', 310000, 'Red', 78000, 1, True, 0, 2, 'Patiala',
-     'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9d/Maruti_Suzuki_Swift_VXI_%28facelift%2C_red%29%2C_front_8.22.19.jpg/640px-Maruti_Suzuki_Swift_VXI_%28facelift%2C_red%29%2C_front_8.22.19.jpg'),
+            (d2, oids[4], 'Swift 2020', 'Like new', 500000, 'White', 20000, 0, True, 0, 1, 'Chandigarh',
+             'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5c/2021_Maruti_Swift.jpg/640px-2021_Maruti_Swift.jpg'),
 
-    (d2, oids[4], 'Swift 2020', 'Like new', 500000, 'White', 20000, 0, True, 0, 1, 'Chandigarh',
-     'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5c/2021_Maruti_Swift.jpg/640px-2021_Maruti_Swift.jpg'),
+            (d2, oids[5], 'Dzire 2020', 'Sedan', 650000, 'Silver', 25000, 0, True, 0, 1, 'Delhi',
+             'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3f/Maruti_Suzuki_Dzire_2017.jpg/640px-Maruti_Suzuki_Dzire_2017.jpg'),
+        ]
 
-    (d2, oids[5], 'Dzire 2020', 'Sedan', 650000, 'Silver', 25000, 0, True, 0, 1, 'Delhi',
-     'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3f/Maruti_Suzuki_Dzire_2017.jpg/640px-Maruti_Suzuki_Dzire_2017.jpg'),
+    else:
+        inventory = [
+            (d1, oids[0], 'Honda City 2015', 'Good condition', 620000, 'White', 52000, 0, True, 0, 1, 'Delhi', ''),
+            (d1, oids[1], 'Honda City 2018', 'Excellent', 780000, 'Silver', 41000, 0, True, 0, 1, 'Mumbai', ''),
+            (d1, oids[2], 'Honda Amaze 2020', 'Family car', 550000, 'Red', 30000, 0, True, 0, 1, 'Delhi', ''),
+            (d2, oids[3], 'Swift 2016', 'Budget car', 310000, 'Red', 78000, 1, True, 0, 2, 'Patiala', ''),
+            (d2, oids[4], 'Swift 2020', 'Like new', 500000, 'White', 20000, 0, True, 0, 1, 'Chandigarh', ''),
+            (d2, oids[5], 'Dzire 2020', 'Sedan', 650000, 'Silver', 25000, 0, True, 0, 1, 'Delhi', ''),
+            (d3, oids[6], 'Baleno 2019', 'Premium hatchback', 600000, 'Blue', 30000, 0, True, 0, 1, 'Jaipur', ''),
+            (d3, oids[7], 'Creta 2019', 'SUV', 850000, 'Black', 34000, 0, True, 1, 1, 'Chandigarh', ''),
+            (d3, oids[8], 'Creta 2022', 'Top model', 1200000, 'White', 15000, 0, True, 0, 1, 'Delhi', ''),
+            (d1, oids[9], 'i20 2021', 'Stylish', 700000, 'Red', 20000, 0, True, 0, 1, 'Delhi', ''),
+            (d2, oids[10], 'Innova 2017', 'Family car', 1150000, 'Silver', 65000, 0, True, 0, 2, 'Mumbai', ''),
+            (d3, oids[11], 'Fortuner 2018', 'Luxury SUV', 2500000, 'Black', 50000, 0, True, 0, 1, 'Delhi', ''),
+            (d1, oids[12], 'XUV500 2018', 'Powerful', 950000, 'White', 60000, 0, True, 0, 2, 'Bangalore', ''),
+            (d2, oids[13], 'Thar 2021', 'Offroad', 1300000, 'Red', 10000, 0, True, 0, 1, 'Goa', ''),
+            (d3, oids[14], 'Nexon 2021', 'Safe car', 730000, 'Grey', 18000, 0, True, 0, 1, 'Pune', ''),
+            (d1, oids[15], 'Harrier 2020', 'Premium SUV', 1400000, 'Black', 30000, 0, True, 0, 1, 'Delhi', ''),
+            (d2, oids[16], 'BMW 3 Series', 'Luxury', 3500000, 'White', 20000, 0, True, 0, 1, 'Mumbai', ''),
+            (d3, oids[17], 'Audi A4', 'Premium sedan', 3800000, 'Black', 25000, 0, True, 0, 1, 'Delhi', ''),
+            (d1, oids[18], 'MG Hector', 'Smart SUV', 1200000, 'Red', 22000, 0, True, 0, 1, 'Delhi', ''),
+            (d2, oids[19], 'Kia Seltos', 'Trendy SUV', 1300000, 'Orange', 15000, 0, True, 0, 1, 'Chandigarh', ''),
+        ]
 
-    (d3, oids[6], 'Baleno 2019', 'Premium hatchback', 600000, 'Blue', 30000, 0, True, 0, 1, 'Jaipur',
-     'https://upload.wikimedia.org/wikipedia/commons/thumb/2/24/2019_Maruti_Baleno.jpg/640px-2019_Maruti_Baleno.jpg'),
-
-    (d3, oids[7], 'Creta 2019', 'SUV', 850000, 'Black', 34000, 0, True, 1, 1, 'Chandigarh',
-     'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/2019_Hyundai_Creta_1.6_SX%2B_%28facelift%2C_black%29%2C_front_8.22.19.jpg/640px-2019_Hyundai_Creta_1.6_SX%2B_%28facelift%2C_black%29%2C_front_8.22.19.jpg'),
-
-    (d3, oids[8], 'Creta 2022', 'Top model', 1200000, 'White', 15000, 0, True, 0, 1, 'Delhi',
-     'https://upload.wikimedia.org/wikipedia/commons/thumb/7/70/Hyundai_Creta_2022.jpg/640px-Hyundai_Creta_2022.jpg'),
-
-    (d1, oids[9], 'i20 2021', 'Stylish', 700000, 'Red', 20000, 0, True, 0, 1, 'Delhi',
-     'https://upload.wikimedia.org/wikipedia/commons/thumb/0/0d/Hyundai_i20_2020.jpg/640px-Hyundai_i20_2020.jpg'),
-
-    (d2, oids[10], 'Innova 2017', 'Family car', 1150000, 'Silver', 65000, 0, True, 0, 2, 'Mumbai',
-     'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d8/2016_Toyota_Innova_Crysta_2.8_V_%28front%29%2C_Kuala_Lumpur.jpg/640px-2016_Toyota_Innova_Crysta_2.8_V_%28front%29%2C_Kuala_Lumpur.jpg'),
-
-    (d3, oids[11], 'Fortuner 2018', 'Luxury SUV', 2500000, 'Black', 50000, 0, True, 0, 1, 'Delhi',
-     'https://upload.wikimedia.org/wikipedia/commons/thumb/8/8f/2018_Toyota_Fortuner.jpg/640px-2018_Toyota_Fortuner.jpg'),
-
-    (d1, oids[12], 'XUV500 2018', 'Powerful', 950000, 'White', 60000, 0, True, 0, 2, 'Bangalore',
-     'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3f/Mahindra_XUV500.jpg/640px-Mahindra_XUV500.jpg'),
-
-    (d2, oids[13], 'Thar 2021', 'Offroad', 1300000, 'Red', 10000, 0, True, 0, 1, 'Goa',
-     'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f2/2020_Mahindra_Thar.jpg/640px-2020_Mahindra_Thar.jpg'),
-
-    (d3, oids[14], 'Nexon 2021', 'Safe car', 730000, 'Grey', 18000, 0, True, 0, 1, 'Pune',
-     'https://upload.wikimedia.org/wikipedia/commons/thumb/f/fc/2020_Tata_Nexon_XZ%2B_%28facelift%2C_red%29%2C_front_8.22.19.jpg/640px-2020_Tata_Nexon_XZ%2B_%28facelift%2C_red%29%2C_front_8.22.19.jpg'),
-
-    (d1, oids[15], 'Harrier 2020', 'Premium SUV', 1400000, 'Black', 30000, 0, True, 0, 1, 'Delhi',
-     'https://upload.wikimedia.org/wikipedia/commons/thumb/5/57/Tata_Harrier.jpg/640px-Tata_Harrier.jpg'),
-
-    (d2, oids[16], 'BMW 3 Series', 'Luxury', 3500000, 'White', 20000, 0, True, 0, 1, 'Mumbai',
-     'https://upload.wikimedia.org/wikipedia/commons/thumb/8/8c/BMW_3_Series.jpg/640px-BMW_3_Series.jpg'),
-
-    (d3, oids[17], 'Audi A4', 'Premium sedan', 3800000, 'Black', 25000, 0, True, 0, 1, 'Delhi',
-     'https://upload.wikimedia.org/wikipedia/commons/thumb/2/2b/Audi_A4_B9.jpg/640px-Audi_A4_B9.jpg'),
-
-    (d1, oids[18], 'MG Hector', 'Smart SUV', 1200000, 'Red', 22000, 0, True, 0, 1, 'Delhi',
-     'https://upload.wikimedia.org/wikipedia/commons/thumb/0/0b/MG_Hector.jpg/640px-MG_Hector.jpg'),
-
-    (d2, oids[19], 'Kia Seltos', 'Trendy SUV', 1300000, 'Orange', 15000, 0, True, 0, 1, 'Chandigarh',
-     'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3c/Kia_Seltos.jpg/640px-Kia_Seltos.jpg')
-     ]
-
-    # ✅ ADD THIS LINE (IMPORTANT)
-    if os.getenv("TESTING") == "1":
-        inventory = inventory[:6]
+    # =========================
+    # INSERT DATA
+    # =========================
     for l in inventory:
         c.execute(f"""INSERT INTO Marketplace_Inventory
         (dealer_id,oem_id,title,description,asking_price,color,
          odometer_km,major_scratches,original_paint,
          accidents_reported,previous_buyers,registration_place,image_url)
         VALUES({ph(13)})""", l)
-        
+
     conn.commit()
     conn.close()
+
     print("Database seeded successfully")
+
 
 
 
