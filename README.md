@@ -13,6 +13,64 @@
 
 ---
 
+## 📌 Project Summary
+
+BuyCars is a full-stack used car marketplace platform that enables dealers to list vehicles, users to browse and wishlist cars, and admins to manage the platform. It includes advanced search, filtering, caching, authentication, and real-time UI features.
+
+---
+
+## 🌐 Live Demo
+
+- 🔗 Frontend: https://buycars-frontend.netlify.app
+- 🔗 Backend API: https://buycars-2kvl.onrender.com
+
+---
+
+## 🚀 Highlights
+
+- Built full-stack production-ready app (React + Flask + PostgreSQL)
+- Implemented JWT authentication with refresh tokens
+- Integrated Redis caching for performance optimization
+- Designed scalable REST APIs with pagination & filtering
+- Deployed on Render + Netlify with CI/CD pipeline
+
+---
+
+## 📸 Screenshots
+
+### 🏠 Home / Login Page
+![Login](screenshot_login.png)
+
+### 🔍 Browse & Search
+![Browse](screenshot_home.png)
+
+### 🚗 Search Results & Car Cards
+![Search Results](screenshot_search.png)
+
+### 🗄️ OEM Specifications
+![OEM Specs](screenshot_oem.png)
+
+---
+
+## ⚡ Quick Start
+
+```bash
+git clone https://github.com/hemant7199/buycars.git
+cd buycars
+
+# Backend
+cd backend
+pip install -r requirements.txt
+python app.py
+
+# Frontend
+cd ../frontend
+npm install
+npm run dev
+```
+
+---
+
 ## 🛠️ Tech Stack
 
 <p align="center">
@@ -472,3 +530,16 @@ push / PR
 ## 📄 License
 
 MIT License — free to use, modify, and distribute.
+
+---
+
+## 💼 What I Built
+
+Developed a full-stack used car marketplace using React, Flask, and PostgreSQL with JWT authentication, Redis caching, and advanced search/filtering features. Deployed on Render and Netlify with CI/CD integration.
+
+---
+
+## 👤 Author
+
+**Hemant**  
+GitHub: https://github.com/hemant7199
