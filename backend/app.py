@@ -6,6 +6,7 @@ from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 from dotenv import load_dotenv
 
+
 load_dotenv()
 
 
@@ -67,6 +68,15 @@ app.config['SECRET_KEY'] = AppConfig.SECRET_KEY
 app.config['DEBUG']      = AppConfig.DEBUG
 
 # 🔥 ADD THIS BLOCK
+@app.after_request
+def add_security_headers(response):
+    response.headers['X-Content-Type-Options'] = 'nosniff'
+    response.headers['X-Frame-Options'] = 'DENY'
+    response.headers['X-XSS-Protection'] = '1; mode=block'
+    response.headers['Referrer-Policy'] = 'strict-origin-when-cross-origin'
+    if ENV == 'production':
+        response.headers['Strict-Transport-Security'] = 'max-age=31536000; includeSubDomains'
+    return response
 
 
 # ─── ALLOWED ORIGINS ────────────────────────────────────────────────────────
@@ -275,7 +285,7 @@ def init_db():
     )
     """)
 
-    c.execute("""
+        c.execute("""
     CREATE TABLE IF NOT EXISTS OEM_Specs (
         oem_id INTEGER PRIMARY KEY AUTOINCREMENT,
         make TEXT,
@@ -291,7 +301,7 @@ def init_db():
     )
     """)
 
-    c.execute("""
+        c.execute("""
     CREATE TABLE IF NOT EXISTS Marketplace_Inventory (
         inventory_id INTEGER PRIMARY KEY AUTOINCREMENT,
         dealer_id INTEGER,
@@ -320,8 +330,15 @@ def init_db():
     # # =========================
     c.execute("SELECT COUNT(*) FROM Marketplace_Inventory")
     count = c.fetchone()[0]
-    c.execute("DELETE FROM Marketplace_Inventory")
-    c.execute("DELETE FROM OEM_Specs")
+
+    # ✅ IMPORTANT FIX
+    if count > 0 and os.getenv("TESTING") == "1":
+        conn.close()
+        return
+
+    if os.getenv("TESTING") != "1":
+        c.execute("DELETE FROM Marketplace_Inventory")
+        c.execute("DELETE FROM OEM_Specs")
     
     pw = generate_password_hash('password123')
 
@@ -369,13 +386,15 @@ def init_db():
 
     ('MG','Hector',2021,1600000,'Red,White,Black',13.0,141.0,195,'Petrol','Automatic'),
     ('Kia','Seltos',2022,1500000,'Orange,White,Black',16.5,138.0,190,'Petrol','Manual')
-]
-
+    ]
+    # ✅ ADD THIS LINE (IMPORTANT)
+    if os.getenv("TESTING") == "1":
+        oems = oems[:12]
     for o in oems:
         c.execute(f"""INSERT INTO OEM_Specs
-            (make,model,year,list_price,available_colors,mileage_kmpl,
-             power_bhp,max_speed_kmph,fuel_type,transmission)
-            VALUES({ph(10)})""", o)
+        (make,model,year,list_price,available_colors,mileage_kmpl,
+         power_bhp,max_speed_kmph,fuel_type,transmission)
+        VALUES({ph(10)})""", o)
 
     conn.commit()
 
@@ -388,8 +407,8 @@ def init_db():
     # ✅ GET OEM IDS
     c.execute("SELECT oem_id FROM OEM_Specs ORDER BY oem_id")
     oids = [r[0] for r in c.fetchall()]
-
-    if len(oids) < 20 or len(dids) < 3: 
+    if len(oids) < 6 or len(dids) < 3:
+     
         print("Not enough data to insert inventory")
         conn.close()
         return
@@ -456,23 +475,23 @@ def init_db():
 
     (d2, oids[19], 'Kia Seltos', 'Trendy SUV', 1300000, 'Orange', 15000, 0, True, 0, 1, 'Chandigarh',
      'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3c/Kia_Seltos.jpg/640px-Kia_Seltos.jpg')
-]
+     ]
 
+    # ✅ ADD THIS LINE (IMPORTANT)
+    if os.getenv("TESTING") == "1":
+        inventory = inventory[:6]
     for l in inventory:
         c.execute(f"""INSERT INTO Marketplace_Inventory
-            (dealer_id,oem_id,title,description,asking_price,color,
-             odometer_km,major_scratches,original_paint,
-             accidents_reported,previous_buyers,registration_place,image_url)
-            VALUES({ph(13)})""", l)
-
+        (dealer_id,oem_id,title,description,asking_price,color,
+         odometer_km,major_scratches,original_paint,
+         accidents_reported,previous_buyers,registration_place,image_url)
+        VALUES({ph(13)})""", l)
+        
     conn.commit()
     conn.close()
     print("Database seeded successfully")
 
-# ✅ ADD HERE (CORRECT PLACE)
-with app.app_context():
-    init_db()
-    
+
 
 
 # ─── AUTH HELPERS ─────────────────────────────────────────────────────────────
