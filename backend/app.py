@@ -303,17 +303,22 @@ def init_db():
     c.execute("SELECT oem_id FROM OEM_Specs ORDER BY oem_id")
     oids = [list(r.values())[0] if isinstance(r,dict) else r[0] for r in c.fetchall()]
     d1,d2,d3 = dids[0],dids[1],dids[2]
+
+    # ✅ THIS MUST BE INSIDE FUNCTION
     for l in [
-        (d1,oids[0],'Honda City 2015 - Single Owner, Well Maintained','Pristine condition|Recently serviced|All original parts|Accident-free history|Full insurance valid',620000,'White',52000,0,1,0,1,'Delhi','https://upload.wikimedia.org/wikipedia/commons/thumb/c/c7/2014_Honda_City_1.5_V_%28front%29%2C_Subang_Jaya.jpg/640px-2014_Honda_City_1.5_V_%28front%29%2C_Subang_Jaya.jpg'),
-        (d1,oids[3],'Maruti Swift 2016 - Great Mileage, Low Price','CNG kit factory fitted|Dual airbags|Power steering|Central locking|Music system',310000,'Red',78000,1,1,0,2,'Patiala','https://upload.wikimedia.org/wikipedia/commons/thumb/9/9d/Maruti_Suzuki_Swift_VXI_%28facelift%2C_red%29%2C_front_8.22.19.jpg/640px-Maruti_Suzuki_Swift_VXI_%28facelift%2C_red%29%2C_front_8.22.19.jpg'),
-        (d2,oids[5],'Hyundai Creta 2019 - Sunroof, Low KMs','Sunroof installed|Apple CarPlay|Reverse camera|Wireless charging|Lane assist',850000,'Phantom Black',34000,0,1,1,1,'Chandigarh','https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/2019_Hyundai_Creta_1.6_SX%2B_%28facelift%2C_black%29%2C_front_8.22.19.jpg/640px-2019_Hyundai_Creta_1.6_SX%2B_%28facelift%2C_black%29%2C_front_8.22.19.jpg'),
-        (d2,oids[7],'Toyota Innova 2017 - 7 Seater, Family Use','7-seater family SUV|Captain seats|Dual zone AC|Cruise control|18-inch alloys',1150000,'Silver',65000,0,1,0,2,'Mumbai','https://upload.wikimedia.org/wikipedia/commons/thumb/d/d8/2016_Toyota_Innova_Crysta_2.8_V_%28front%29%2C_Kuala_Lumpur.jpg/640px-2016_Toyota_Innova_Crysta_2.8_V_%28front%29%2C_Kuala_Lumpur.jpg'),
-        (d3,oids[9],'Tata Nexon 2021 - 5 Star Safety, Like New','5-star Global NCAP safety|Electric sunroof|JBL sound system|Terrain modes|Harman infotainment',730000,'Flame Red',18000,0,1,0,1,'Bangalore','https://upload.wikimedia.org/wikipedia/commons/thumb/f/fc/2020_Tata_Nexon_XZ%2B_%28facelift%2C_red%29%2C_front_8.22.19.jpg/640px-2020_Tata_Nexon_XZ%2B_%28facelift%2C_red%29%2C_front_8.22.19.jpg'),
-        (d3,oids[1],'Honda City 2018 CVT - Automatic, Excellent Condition','CVT Automatic|Sensing safety suite|LED headlights|8-inch touchscreen|Leather seats',780000,'Silver',41000,0,1,0,1,'Hyderabad','https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/2018_Honda_City_1.5_V_%28front%29%2C_Subang_Jaya.jpg/640px-2018_Honda_City_1.5_V_%28front%29%2C_Subang_Jaya.jpg')]:
-        c.execute(f"INSERT INTO Marketplace_Inventory(dealer_id,oem_id,title,description,asking_price,color,odometer_km,major_scratches,original_paint,accidents_reported,previous_buyers,registration_place,image_url)VALUES({ph(13)})", l)
+        (d1,oids[0],'Honda City...',620000,'White',52000,0,True,0,1,'Delhi','...'),
+        (d1,oids[3],'Maruti Swift...',310000,'Red',78000,1,True,0,2,'Patiala','...'),
+        (d2,oids[5],'Hyundai Creta...',850000,'Black',34000,0,True,1,1,'Chandigarh','...'),
+        (d2,oids[7],'Toyota Innova...',1150000,'Silver',65000,0,True,0,2,'Mumbai','...'),
+        (d3,oids[9],'Tata Nexon...',730000,'Red',18000,0,True,0,1,'Bangalore','...'),
+        (d3,oids[1],'Honda City...',780000,'Silver',41000,0,True,0,1,'Hyderabad','...')
+    ]:
+        c.execute(f"INSERT INTO Marketplace_Inventory(dealer_id,oem_id,title,description,asking_price,color,odometer_km,major_scratches,original_paint,accidents_reported,previous_buyers,registration_place,image_url) VALUES({ph(13)})", l)
+
     conn.commit()
     conn.close()
     print("Database seeded.")
+
 # ✅ ADD HERE (CORRECT PLACE)
 with app.app_context():
     init_db()
