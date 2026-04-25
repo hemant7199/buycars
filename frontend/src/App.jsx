@@ -371,7 +371,7 @@ const AuthPage = ({ onAuth }) => {
       <div style={{ flex:1, display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", padding:48, color:T.white }}>
         <div style={{ maxWidth:440 }}>
           <div style={{ display:"flex", alignItems:"center", gap:10, marginBottom:48 }}>
-            <div style={{ width:44, height:44, background:`linear-gradient(135deg,${T.gold},${T.goldDark})`, borderRadius:12, display:"flex", alignItems:"center", justifyContent:"center", fontSize:22 }}>🚗</div>
+            <div style={{ width:44, height:44, background:`linear-gradient(135deg,${T.gold},${T.goldDark})`, borderRadius:12, display:"flex", alignItems:"center", justifyContent:"center", fontSize:22 }}></div>
             <span style={{ fontSize:26, fontWeight:800, letterSpacing:"-0.5px" }}>buy<span style={{color:T.gold}}>cars</span>.com</span>
           </div>
           <h1 style={{ fontSize:42, fontWeight:800, lineHeight:1.15, marginBottom:20 }}>India's smartest<br/><span style={{color:T.gold}}>second-hand car</span><br/>marketplace</h1>
@@ -400,14 +400,14 @@ const AuthPage = ({ onAuth }) => {
           <div style={{ textAlign:"center", marginTop:20, fontSize:13, color:T.muted }}>
             {mode==="login"?<>New dealer? <span style={{color:T.purple,cursor:"pointer",fontWeight:700}} onClick={()=>{setMode("signup");setErr("");setOk("");}}>Create account</span></>:<>Have an account? <span style={{color:T.purple,cursor:"pointer",fontWeight:700}} onClick={()=>{setMode("login");setErr("");setOk("");}}>Sign in</span></>}
           </div>
-          <div style={{ marginTop:24, padding:"14px", background:T.surface, borderRadius:10, border:`1px solid ${T.border}` }}>
-            <div style={{ fontSize:11, fontWeight:700, color:T.muted, textTransform:"uppercase", letterSpacing:"0.5px", marginBottom:6 }}>Demo Credentials</div>
-            <div style={{ fontSize:13, color:T.mid }}>📧 rajesh@dealer.com &nbsp;|&nbsp; 🔑 password123</div>
-            <div style={{ fontSize:12, color:T.muted, marginTop:4 }}>Admin: admin@buycars.com / admin123</div>
-          </div>
-        </div>
-      </div>
-    </div>
+          <div style={{ marginTop:24 }}>
+  <div style={{ fontSize:12, color:T.muted, textAlign:"center" }}>
+    Enter your registered email and password to continue
+  </div>
+</div>
+</div>
+</div>
+</div>
   );
 };
 

@@ -66,6 +66,9 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = AppConfig.SECRET_KEY
 app.config['DEBUG']      = AppConfig.DEBUG
 
+# 🔥 ADD THIS BLOCK
+
+
 # ─── ALLOWED ORIGINS ────────────────────────────────────────────────────────
 ALLOWED_ORIGINS = [o.strip() for o in os.getenv('ALLOWED_ORIGINS', 'http://localhost:5173').split(',')]
 
@@ -311,6 +314,10 @@ def init_db():
     conn.commit()
     conn.close()
     print("Database seeded.")
+# ✅ ADD HERE (CORRECT PLACE)
+with app.app_context():
+    init_db()
+    
 
 
 # ─── AUTH HELPERS ─────────────────────────────────────────────────────────────
