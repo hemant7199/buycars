@@ -323,11 +323,10 @@ def init_db():
 
     conn.commit()
 
+    
     # =========================
     # CHECK INVENTORY FIRST
     # =========================
-    # CHECK INVENTORY FIRST
-    # # =========================
     c.execute("SELECT COUNT(*) FROM Marketplace_Inventory")
     count = c.fetchone()[0]
 
@@ -422,6 +421,7 @@ def init_db():
     # =========================
     # INVENTORY LIST
     # =========================
+
     if TESTING:
         inventory = [
             (d1, oids[0], 'Honda City 2015', 'Good condition', 620000, 'White', 52000, 0, True, 0, 1, 'Delhi',
@@ -481,10 +481,6 @@ def init_db():
     conn.close()
 
     print("Database seeded successfully")
-
-
-
-
 
 # ─── AUTH HELPERS ─────────────────────────────────────────────────────────────
 def make_tokens(user):
