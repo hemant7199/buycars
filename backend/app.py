@@ -276,9 +276,8 @@ def init_db():
     # # =========================
     c.execute("SELECT COUNT(*) FROM Marketplace_Inventory")
     count = c.fetchone()[0]
-    if count > 0:
-        conn.close()
-        return
+    c.execute("DELETE FROM Marketplace_Inventory")
+    c.execute("DELETE FROM OEM_Specs")
     
     pw = generate_password_hash('password123')
 
