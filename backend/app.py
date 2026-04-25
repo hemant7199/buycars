@@ -300,10 +300,34 @@ def init_db():
     # OEM DATA
     # =========================
     oems = [
-        ('Honda','City',2015,1050000,'White',17.8,118.0,180,'Petrol','Manual'),
-        ('Maruti','Swift',2016,560000,'Red',22.0,83.1,160,'Petrol','Manual'),
-        ('Hyundai','Creta',2019,1200000,'Black',17.0,113.4,180,'Petrol','Manual')
-    ]
+    ('Honda','City',2015,1050000,'White,Silver,Red',17.8,118.0,180,'Petrol','Manual'),
+    ('Honda','City',2018,1150000,'White,Silver,Grey',17.8,118.0,180,'Petrol','CVT'),
+    ('Honda','Amaze',2020,750000,'White,Red,Silver',18.6,89.0,160,'Petrol','Manual'),
+
+    ('Maruti','Swift',2016,560000,'Red,White,Black',22.0,83.1,160,'Petrol','Manual'),
+    ('Maruti','Swift',2020,625000,'Red,White,Blue',23.2,89.0,170,'Petrol','AMT'),
+    ('Maruti','Dzire',2020,700000,'Silver,White,Blue',24.1,89.0,170,'Petrol','Manual'),
+    ('Maruti','Baleno',2019,750000,'Blue,White,Grey',21.4,83.0,170,'Petrol','Manual'),
+
+    ('Hyundai','Creta',2019,1200000,'Black,White,Silver',17.0,113.4,180,'Petrol','Manual'),
+    ('Hyundai','Creta',2022,1425000,'Black,White,Grey',14.4,113.4,185,'Petrol','DCT'),
+    ('Hyundai','i20',2021,900000,'Red,White,Blue',20.3,99.0,180,'Petrol','Manual'),
+
+    ('Toyota','Innova',2017,1800000,'White,Silver,Bronze',11.0,148.0,170,'Diesel','Manual'),
+    ('Toyota','Fortuner',2018,3000000,'Black,White,Silver',10.0,174.5,190,'Diesel','Automatic'),
+
+    ('Mahindra','XUV500',2018,1550000,'White,Black,Red',15.1,140.0,185,'Diesel','Manual'),
+    ('Mahindra','Thar',2021,1400000,'Red,Black,Green',15.2,150.0,160,'Petrol','Manual'),
+
+    ('Tata','Nexon',2021,850000,'Red,White,Grey',17.0,120.0,180,'Petrol','AMT'),
+    ('Tata','Harrier',2020,1800000,'Black,White,Grey',16.0,170.0,190,'Diesel','Manual'),
+
+    ('BMW','3 Series',2019,4200000,'White,Black,Silver',15.2,190.0,250,'Petrol','Automatic'),
+    ('Audi','A4',2019,4500000,'White,Black,Blue',14.1,188.0,240,'Petrol','Automatic'),
+
+    ('MG','Hector',2021,1600000,'Red,White,Black',13.0,141.0,195,'Petrol','Automatic'),
+    ('Kia','Seltos',2022,1500000,'Orange,White,Black',16.5,138.0,190,'Petrol','Manual')
+]
 
     for o in oems:
         c.execute(f"""INSERT INTO OEM_Specs
@@ -322,7 +346,7 @@ def init_db():
     # ✅ GET OEM IDS
     c.execute("SELECT oem_id FROM OEM_Specs ORDER BY oem_id")
     oids = [r[0] for r in c.fetchall()]
-    
+
     if len(oids) < 3 or len(dids) < 3:
         conn.close()
         return
