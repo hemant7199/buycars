@@ -36,6 +36,7 @@ BuyCars is a full-stack used car marketplace platform that enables dealers to li
 
 ---
 
+<<<<<<< HEAD
 ## 📸 Screenshots
 
 ### 🏠 Home / Login Page
@@ -52,6 +53,8 @@ BuyCars is a full-stack used car marketplace platform that enables dealers to li
 
 ---
 
+=======
+>>>>>>> b62862f0f4b1c11f489a387988b48e988dda2181
 ## ⚡ Quick Start
 
 ```bash
