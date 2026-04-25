@@ -219,107 +219,132 @@ def sanitize_dict(d, keys):
             d[k] = sanitize(d[k])
     return d
 
-
-# ─── DB INIT ─────────────────────────────────────────────────────────────────
 def init_db():
     conn = get_db()
     c = conn.cursor()
+
+    # =========================
+    # CREATE TABLES
+    # =========================
     if DB_TYPE == 'postgres':
         c.execute('''CREATE TABLE IF NOT EXISTS Users (
-            user_id SERIAL PRIMARY KEY, name TEXT NOT NULL, email TEXT UNIQUE NOT NULL,
-            password_hash TEXT NOT NULL, role TEXT DEFAULT 'dealer',
+            user_id SERIAL PRIMARY KEY,
+            name TEXT NOT NULL,
+            email TEXT UNIQUE NOT NULL,
+            password_hash TEXT NOT NULL,
+            role TEXT DEFAULT 'dealer',
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP)''')
+
         c.execute('''CREATE TABLE IF NOT EXISTS OEM_Specs (
-            oem_id SERIAL PRIMARY KEY, make TEXT NOT NULL, model TEXT NOT NULL,
-            year INTEGER NOT NULL, list_price REAL NOT NULL, available_colors TEXT NOT NULL,
-            mileage_kmpl REAL NOT NULL, power_bhp REAL NOT NULL,
-            max_speed_kmph INTEGER NOT NULL, fuel_type TEXT NOT NULL, transmission TEXT NOT NULL)''')
+            oem_id SERIAL PRIMARY KEY,
+            make TEXT NOT NULL,
+            model TEXT NOT NULL,
+            year INTEGER NOT NULL,
+            list_price REAL NOT NULL,
+            available_colors TEXT NOT NULL,
+            mileage_kmpl REAL NOT NULL,
+            power_bhp REAL NOT NULL,
+            max_speed_kmph INTEGER NOT NULL,
+            fuel_type TEXT NOT NULL,
+            transmission TEXT NOT NULL)''')
+
         c.execute('''CREATE TABLE IF NOT EXISTS Marketplace_Inventory (
             inventory_id SERIAL PRIMARY KEY,
-            dealer_id INTEGER NOT NULL REFERENCES Users(user_id),
-            oem_id INTEGER NOT NULL REFERENCES OEM_Specs(oem_id),
-            title TEXT NOT NULL, description TEXT NOT NULL,
-            asking_price REAL NOT NULL, color TEXT NOT NULL,
-            odometer_km INTEGER NOT NULL, major_scratches INTEGER DEFAULT 0,
-            original_paint BOOLEAN DEFAULT TRUE, accidents_reported INTEGER DEFAULT 0,
-            previous_buyers INTEGER DEFAULT 0, registration_place TEXT NOT NULL,
-            image_url TEXT, listed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP)''')
+            dealer_id INTEGER REFERENCES Users(user_id),
+            oem_id INTEGER REFERENCES OEM_Specs(oem_id),
+            title TEXT,
+            description TEXT,
+            asking_price REAL,
+            color TEXT,
+            odometer_km INTEGER,
+            major_scratches INTEGER,
+            original_paint BOOLEAN,
+            accidents_reported INTEGER,
+            previous_buyers INTEGER,
+            registration_place TEXT,
+            image_url TEXT,
+            listed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP)''')
     else:
-        c.execute('''CREATE TABLE IF NOT EXISTS Users (
-            user_id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL,
-            email TEXT UNIQUE NOT NULL, password_hash TEXT NOT NULL,
-            role TEXT DEFAULT 'dealer', created_at DATETIME DEFAULT CURRENT_TIMESTAMP)''')
-        c.execute('''CREATE TABLE IF NOT EXISTS OEM_Specs (
-            oem_id INTEGER PRIMARY KEY AUTOINCREMENT, make TEXT NOT NULL, model TEXT NOT NULL,
-            year INTEGER NOT NULL, list_price REAL NOT NULL, available_colors TEXT NOT NULL,
-            mileage_kmpl REAL NOT NULL, power_bhp REAL NOT NULL,
-            max_speed_kmph INTEGER NOT NULL, fuel_type TEXT NOT NULL, transmission TEXT NOT NULL)''')
-        c.execute('''CREATE TABLE IF NOT EXISTS Marketplace_Inventory (
-            inventory_id INTEGER PRIMARY KEY AUTOINCREMENT,
-            dealer_id INTEGER NOT NULL REFERENCES Users(user_id),
-            oem_id INTEGER NOT NULL REFERENCES OEM_Specs(oem_id),
-            title TEXT NOT NULL, description TEXT NOT NULL,
-            asking_price REAL NOT NULL, color TEXT NOT NULL,
-            odometer_km INTEGER NOT NULL, major_scratches INTEGER DEFAULT 0,
-            original_paint BOOLEAN DEFAULT 1, accidents_reported INTEGER DEFAULT 0,
-            previous_buyers INTEGER DEFAULT 0, registration_place TEXT NOT NULL,
-            image_url TEXT, listed_at DATETIME DEFAULT CURRENT_TIMESTAMP)''')
-    c.execute("CREATE INDEX IF NOT EXISTS idx_oem ON OEM_Specs(make,model,year)")
-    c.execute("CREATE INDEX IF NOT EXISTS idx_inv_dealer ON Marketplace_Inventory(dealer_id)")
+        pass
+
     conn.commit()
 
-    # Seed only if empty
-    # Check inventory instead of OEM
+    # =========================
+    # CHECK INVENTORY FIRST
+    # =========================
     c.execute("SELECT COUNT(*) FROM Marketplace_Inventory")
-    r = c.fetchone()
-    count = list(r.values())[0] if isinstance(r, dict) else r[0]
+    count = c.fetchone()[0]
     if count > 0:
         conn.close()
         return
 
+    # =========================
+    # USERS (SAFE INSERT)
+    # =========================
     pw = generate_password_hash('password123')
-    for u in [('Rajesh Kumar','rajesh@dealer.com',pw,'dealer'),
-               ('Sunita Sharma','sunita@dealer.com',pw,'dealer'),
-               ('Amit Verma','amit@dealer.com',pw,'dealer'),
-               ('Admin User','admin@buycars.com',generate_password_hash('admin123'),'admin')]:
-        c.execute(f"INSERT INTO Users(name,email,password_hash,role)VALUES({ph(4)})", u)
 
-    for o in [
-        ('Honda','City',2015,1050000,'White,Silver,Red,Blue',17.8,118.0,180,'Petrol','Manual'),
-        ('Honda','City',2018,1150000,'White,Silver,Red,Blue,Grey',17.8,118.0,180,'Petrol','CVT'),
-        ('Honda','City',2021,1195000,'Platinum White,Golden Brown,Lunar Silver',18.4,119.0,180,'Petrol','CVT'),
-        ('Maruti','Swift',2016,560000,'Lucent Orange,Pearl Red,Autumn Grey',22.0,83.1,160,'Petrol','Manual'),
-        ('Maruti','Swift',2020,625000,'Fire Red,Pearl White,Midnight Black',23.2,89.0,170,'Petrol','AMT'),
-        ('Hyundai','Creta',2019,1200000,'Phantom Black,Polar White,Typhoon Silver',17.0,113.4,180,'Petrol','Manual'),
-        ('Hyundai','Creta',2022,1425000,'Abyss Black,Atlas White,Titan Grey',14.4,113.4,185,'Petrol','DCT'),
-        ('Toyota','Innova',2017,1800000,'White Pearl,Silver Metallic,Bronze Mica',11.0,148.0,170,'Diesel','Manual'),
-        ('BMW','3 Series',2019,4200000,'Alpine White,Black Sapphire,Glacier Silver',15.2,190.0,250,'Petrol','Automatic'),
-        ('Tata','Nexon',2021,850000,'Flame Red,Calgary White,Daytona Grey',17.0,120.0,180,'Petrol','AMT'),
-        ('Mahindra','XUV500',2018,1550000,'Pearl White,Midnight Black,Crimson Red',15.1,140.0,185,'Diesel','Manual'),
-        ('Volkswagen','Polo',2017,720000,'Candy White,Deep Black,Reflex Silver',18.7,104.5,185,'Petrol','Manual')]:
-        c.execute(f"INSERT INTO OEM_Specs(make,model,year,list_price,available_colors,mileage_kmpl,power_bhp,max_speed_kmph,fuel_type,transmission)VALUES({ph(10)})", o)
+    c.execute("SELECT COUNT(*) FROM Users")
+    user_count = c.fetchone()[0]
+
+    if user_count == 0:
+        users = [
+            ('Rajesh Kumar','rajesh@dealer.com',pw,'dealer'),
+            ('Sunita Sharma','sunita@dealer.com',pw,'dealer'),
+            ('Amit Verma','amit@dealer.com',pw,'dealer'),
+            ('Admin User','admin@buycars.com',generate_password_hash('admin123'),'admin')
+        ]
+        for u in users:
+            c.execute(f"INSERT INTO Users(name,email,password_hash,role) VALUES({ph(4)})", u)
+
+    # =========================
+    # OEM DATA
+    # =========================
+    oems = [
+        ('Honda','City',2015,1050000,'White',17.8,118.0,180,'Petrol','Manual'),
+        ('Maruti','Swift',2016,560000,'Red',22.0,83.1,160,'Petrol','Manual'),
+        ('Hyundai','Creta',2019,1200000,'Black',17.0,113.4,180,'Petrol','Manual')
+    ]
+
+    for o in oems:
+        c.execute(f"""INSERT INTO OEM_Specs
+            (make,model,year,list_price,available_colors,mileage_kmpl,
+             power_bhp,max_speed_kmph,fuel_type,transmission)
+            VALUES({ph(10)})""", o)
+
     conn.commit()
 
-    c.execute("SELECT user_id FROM Users WHERE role='dealer' ORDER BY user_id")
-    dids = [list(r.values())[0] if isinstance(r,dict) else r[0] for r in c.fetchall()]
+    # =========================
+    # INVENTORY DATA
+    # =========================
+   
+    c.execute("SELECT user_id FROM Users WHERE role='dealer'")
+    dids = [r[0] for r in c.fetchall()]
+    # ✅ GET OEM IDS
     c.execute("SELECT oem_id FROM OEM_Specs ORDER BY oem_id")
-    oids = [list(r.values())[0] if isinstance(r,dict) else r[0] for r in c.fetchall()]
-    d1,d2,d3 = dids[0],dids[1],dids[2]
+    oids = [r[0] for r in c.fetchall()]
+    
+    if len(oids) < 3 or len(dids) < 3:
+        conn.close()
+        return
 
-    # ✅ THIS MUST BE INSIDE FUNCTION
-    for l in [
-        (d1,oids[0],'Honda City...',620000,'White',52000,0,True,0,1,'Delhi','...'),
-        (d1,oids[3],'Maruti Swift...',310000,'Red',78000,1,True,0,2,'Patiala','...'),
-        (d2,oids[5],'Hyundai Creta...',850000,'Black',34000,0,True,1,1,'Chandigarh','...'),
-        (d2,oids[7],'Toyota Innova...',1150000,'Silver',65000,0,True,0,2,'Mumbai','...'),
-        (d3,oids[9],'Tata Nexon...',730000,'Red',18000,0,True,0,1,'Bangalore','...'),
-        (d3,oids[1],'Honda City...',780000,'Silver',41000,0,True,0,1,'Hyderabad','...')
-    ]:
-        c.execute(f"INSERT INTO Marketplace_Inventory(dealer_id,oem_id,title,description,asking_price,color,odometer_km,major_scratches,original_paint,accidents_reported,previous_buyers,registration_place,image_url) VALUES({ph(13)})", l)
+    d1, d2, d3 = dids[0], dids[1], dids[2]
+
+    inventory = [
+        (d1, oids[0], 'Honda City', 'Good condition', 620000, 'White', 52000, 0, True, 0, 1, 'Delhi', ''),
+        (d2, oids[1], 'Swift', 'Low price', 310000, 'Red', 78000, 1, True, 0, 2, 'Patiala', ''),
+        (d3, oids[2], 'Creta', 'Sunroof', 850000, 'Black', 34000, 0, True, 1, 1, 'Chandigarh', '')
+    ]
+
+    for l in inventory:
+        c.execute(f"""INSERT INTO Marketplace_Inventory
+            (dealer_id,oem_id,title,description,asking_price,color,
+             odometer_km,major_scratches,original_paint,
+             accidents_reported,previous_buyers,registration_place,image_url)
+            VALUES({ph(13)})""", l)
 
     conn.commit()
     conn.close()
-    print("Database seeded.")
+    print("Database seeded successfully")
 
 # ✅ ADD HERE (CORRECT PLACE)
 with app.app_context():
